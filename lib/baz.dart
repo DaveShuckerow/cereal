@@ -8,5 +8,5 @@ part 'baz.g.dart';
 class Baz {
   final String value;
 
-  Baz(this.value);
+  Baz({this.value});
 }

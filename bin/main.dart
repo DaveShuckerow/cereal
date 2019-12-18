@@ -1,6 +1,12 @@
+import 'dart:convert';
+
+import 'package:codegen/baz.dart';
 import 'package:codegen/sample.dart';
 
 void main() {
-  print(Foo(0, 'words').toJson());
-  print({'bar': '0', 'baz': 'words'}.toFoo().toJson());
+  print(Foo(bar: 0, baz: Baz(value: 'words')).toJson());
+  print((jsonDecode('{"bar": "0", "baz": {"value": "words"}}')
+          as Map<String, dynamic>)
+      .toFoo()
+      .toJson());
 }

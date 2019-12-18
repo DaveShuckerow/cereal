@@ -7,7 +7,16 @@ part of 'baz.dart';
 // **************************************************************************
 
 extension $Baz on Baz {
-  Map<String, String> toJson() => {
+  String toJson() => {
         'value': '$value',
-      };
+      }.toString();
+}
+
+extension $Baz$Reviver on Map<String, dynamic> {
+  Baz toBaz() {
+    final String value = this['value'];
+    return Baz(
+      value: value,
+    );
+  }
 }

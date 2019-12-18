@@ -7,8 +7,19 @@ part of 'sample.dart';
 // **************************************************************************
 
 extension $Foo on Foo {
-  Map<String, String> toJson() => {
+  String toJson() => {
         'bar': '$bar',
         'baz': '${baz.toJson()}',
-      };
+      }.toString();
+}
+
+extension $Foo$Reviver on Map<String, dynamic> {
+  Foo toFoo() {
+    final int bar = int.parse(this['bar']);
+    final Baz baz = (this['baz'] as Map<String, dynamic>).toBaz();
+    return Foo(
+      bar: bar,
+      baz: baz,
+    );
+  }
 }

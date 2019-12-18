@@ -11,5 +11,5 @@ class Foo {
   final int bar;
   final Baz baz;
 
-  Foo(this.bar, this.baz);
+  Foo({this.bar, this.baz});
 }

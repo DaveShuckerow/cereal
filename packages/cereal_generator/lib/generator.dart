@@ -31,7 +31,7 @@ class CerealGenerator extends Generator {
         buffer.write('    {\n');
         for (var field in element.fields) {
           String value = '\$${field.name}';
-          if (checker.hasAnnotationOf(field.type.element)) {
+          if (isCereal(field)) {
             value = '\${${field.name}.toJson()}';
           }
           buffer.write("      '${field.name}': '$value',\n");
@@ -45,9 +45,43 @@ class CerealGenerator extends Generator {
           });
         }));
 
-        buffer.write('extension \$${element.name}\$Reviver on String {\n');
+        buffer.write(
+            'extension \$${element.name}\$Reviver on Map<String, dynamic> {\n');
         buffer.write('  ${element.name} to${element.name}() {\n');
-        buffer.write('    ${element.name()}')
+
+        for (var field in element.fields) {
+          if (isCereal(field)) {
+            buffer.write(
+              "    final ${field.type} ${field.name} = "
+              "(this['${field.name}'] as Map<String, dynamic>).to${field.type}();\n",
+            );
+          } else if (field.type.isDartCoreString) {
+            buffer.write(
+                "    final ${field.type} ${field.name} = this['${field.name}'];\n");
+          } else if (field.type.isDartCoreBool) {
+            buffer.write(
+              "    final ${field.type} ${field.name} = "
+              "this['${field.name}'] == 'true' || this['${field.name}'] == 'True';\n",
+            );
+          } else if (field.type.isDartCoreDouble) {
+            buffer.write(
+              "    final ${field.type} ${field.name} = double.parse(this['${field.name}']);\n",
+            );
+          } else if (field.type.isDartCoreInt) {
+            buffer.write(
+              "    final ${field.type} ${field.name} = int.parse(this['${field.name}']);\n",
+            );
+          } else if (field.type.isDartCoreNum) {
+            buffer.write(
+              "    final ${field.type} ${field.name} = num.parse(this['${field.name}']);\n",
+            );
+          }
+        }
+        buffer.write('    return ${element.name}(\n');
+        for (var field in element.fields) {
+          buffer.write("      ${field.name}: ${field.name},\n");
+        }
+        buffer.write('    );\n');
         buffer.write('  }\n');
         buffer.write('}\n');
       } else {
@@ -57,9 +91,6 @@ class CerealGenerator extends Generator {
     return buffer.toString();
   }
 
-  String deserializerFor(FieldElement field) {
-    if (checker.hasAnnotationOf(field.type.element)) {
-      return 'json'
-    }
-  }
+  bool isCereal(FieldElement field) =>
+      checker.hasAnnotationOf(field.type.element);
 }
