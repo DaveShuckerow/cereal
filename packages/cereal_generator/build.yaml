@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      cereal_generator|cereal:
+        enabled: true
+
+builders:
+  cereal:
+    target: ":cereal_generator"
+    import: "package:cereal_generator/generator.dart"
+    builder_factories: ["buildCereal"]
+    build_extensions: {".dart": [".cereal.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

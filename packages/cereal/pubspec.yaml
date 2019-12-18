@@ -1,0 +1,11 @@
+name: cereal
+author: djshuckerow@google.com
+description: A serializer library for dart with no-overhead code generation.
+
+version: 0.0.1
+
+environment:
+  sdk: '>=2.6.0 <3.0.0'
+
+dependencies:
+  meta: any
