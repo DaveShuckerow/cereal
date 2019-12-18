@@ -9,18 +9,22 @@ part of 'sample.dart';
 extension $Foo on Foo {
   String toJson() => {
         'bar': '$bar',
-        'baz': '${baz.toJson()}',
+        'bazes': [for (var e in bazes) '${e.toJson()}'],
+        'names': [for (var e in names) '$e'],
       }.toString();
 }
 
 extension $Foo$Reviver on JsonCodec {
-  Foo decodeFoo(String input) {
-    final map = this.decode(input);
+  Foo decodeFoo(String input) => toFoo(this.decode(input));
+  Foo toFoo(dynamic decoded) {
+    final map = decoded;
     final int bar = int.parse(map['bar']);
-    final Baz baz = decodeBaz(map['baz'].toString());
+    final List<Baz> bazes = [for (var e in map['bazes']) toBaz(e)];
+    final List<String> names = [for (var e in map['names']) e];
     return Foo(
       bar: bar,
-      baz: baz,
+      bazes: bazes,
+      names: names,
     );
   }
 }

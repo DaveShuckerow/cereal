@@ -13,8 +13,9 @@ extension $Baz on Baz {
 }
 
 extension $Baz$Reviver on JsonCodec {
-  Baz decodeBaz(String input) {
-    final map = this.decode(input);
+  Baz decodeBaz(String input) => toBaz(this.decode(input));
+  Baz toBaz(dynamic decoded) {
+    final map = decoded;
     final String value = map['value'];
     return Baz(
       value: value,

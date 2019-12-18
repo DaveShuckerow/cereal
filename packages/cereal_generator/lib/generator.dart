@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -30,11 +31,8 @@ class CerealGenerator extends Generator {
         buffer.write('  String toJson() => \n');
         buffer.write('    {\n');
         for (var field in element.fields) {
-          String value = '\$${field.name}';
-          if (isCereal(field)) {
-            value = '\${${field.name}.toJson()}';
-          }
-          buffer.write("      '${field.name}': '$value',\n");
+          final value = serializerFor(field.type, field.name);
+          buffer.write("      '${field.name}': $value,\n");
         }
         buffer.write('    }.toString();\n');
         buffer.write('}\n');
@@ -46,37 +44,19 @@ class CerealGenerator extends Generator {
         }));
 
         buffer.write('extension \$${element.name}\$Reviver on JsonCodec {\n');
+        buffer.write(
+            '  ${element.name} decode${element.name}(String input) =>\n');
+        buffer.write('  to${element.name}(this.decode(input));\n');
         buffer
-            .write('  ${element.name} decode${element.name}(String input) {\n');
-        buffer.write('  final map = this.decode(input);\n');
-
+            .write('  ${element.name} to${element.name}(dynamic decoded) {\n');
+        buffer.write('  final map = decoded;\n');
         for (var field in element.fields) {
-          if (isCereal(field)) {
-            buffer.write(
-              "    final ${field.type} ${field.name} = "
-              "decode${field.type}(map['${field.name}'].toString());\n",
-            );
-          } else if (field.type.isDartCoreString) {
-            buffer.write(
-                "    final ${field.type} ${field.name} = map['${field.name}'];\n");
-          } else if (field.type.isDartCoreBool) {
-            buffer.write(
-              "    final ${field.type} ${field.name} = "
-              "this['${field.name}'] == 'true' || map['${field.name}'] == 'True';\n",
-            );
-          } else if (field.type.isDartCoreDouble) {
-            buffer.write(
-              "    final ${field.type} ${field.name} = double.parse(map['${field.name}']);\n",
-            );
-          } else if (field.type.isDartCoreInt) {
-            buffer.write(
-              "    final ${field.type} ${field.name} = int.parse(map['${field.name}']);\n",
-            );
-          } else if (field.type.isDartCoreNum) {
-            buffer.write(
-              "    final ${field.type} ${field.name} = num.parse(map['${field.name}']);\n",
-            );
-          }
+          final deserializer = deserializerFor(
+            field.type,
+            "map['${field.name}']",
+          );
+          buffer.write(
+              '    final ${field.type} ${field.name} = $deserializer;\n');
         }
         buffer.write('    return ${element.name}(\n');
         for (var field in element.fields) {
@@ -92,6 +72,36 @@ class CerealGenerator extends Generator {
     return buffer.toString();
   }
 
-  bool isCereal(FieldElement field) =>
-      checker.hasAnnotationOf(field.type.element);
+  String serializerFor(DartType type, String value) {
+    if (isCereal(type.element)) {
+      return "'\${$value.toJson()}'";
+    }
+    if (type.isDartCoreList) {
+      final nextType = (type as InterfaceType).typeArguments.first;
+      return '[for (var e in $value) ${serializerFor(nextType, 'e')}]';
+    }
+    return "'\$$value'";
+  }
+
+  String deserializerFor(DartType type, String value) {
+    if (isCereal(type.element)) {
+      return "to$type($value)";
+    } else if (type.isDartCoreString) {
+      return "$value";
+    } else if (type.isDartCoreBool) {
+      return "$value == 'true' || $value == 'True'";
+    } else if (type.isDartCoreDouble) {
+      return "double.parse($value)";
+    } else if (type.isDartCoreInt) {
+      return "int.parse($value)";
+    } else if (type.isDartCoreNum) {
+      "num.parse($value)";
+    } else if (type.isDartCoreList) {
+      final nextType = (type as InterfaceType).typeArguments.first;
+      return '[for (var e in $value) ${deserializerFor(nextType, 'e')}]';
+    }
+    assert(false, 'unable to parse $value as a $type');
+  }
+
+  bool isCereal(Element element) => checker.hasAnnotationOf(element);
 }
