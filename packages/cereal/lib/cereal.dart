@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-// export 'dart:convert' show jsonDecode, jsonEncode;
+export 'dart:convert' show JsonCodec, json;
 
 const cereal = CerealAnnotation();
 

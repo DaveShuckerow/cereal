@@ -12,9 +12,10 @@ extension $Baz on Baz {
       }.toString();
 }
 
-extension $Baz$Reviver on Map<String, dynamic> {
-  Baz toBaz() {
-    final String value = this['value'];
+extension $Baz$Reviver on JsonCodec {
+  Baz decodeBaz(String input) {
+    final map = this.decode(input);
+    final String value = map['value'];
     return Baz(
       value: value,
     );

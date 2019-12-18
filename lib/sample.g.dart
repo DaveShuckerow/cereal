@@ -13,10 +13,11 @@ extension $Foo on Foo {
       }.toString();
 }
 
-extension $Foo$Reviver on Map<String, dynamic> {
-  Foo toFoo() {
-    final int bar = int.parse(this['bar']);
-    final Baz baz = (this['baz'] as Map<String, dynamic>).toBaz();
+extension $Foo$Reviver on JsonCodec {
+  Foo decodeFoo(String input) {
+    final map = this.decode(input);
+    final int bar = int.parse(map['bar']);
+    final Baz baz = decodeBaz(map['baz'].toString());
     return Foo(
       bar: bar,
       baz: baz,

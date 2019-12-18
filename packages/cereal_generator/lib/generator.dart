@@ -45,35 +45,36 @@ class CerealGenerator extends Generator {
           });
         }));
 
-        buffer.write(
-            'extension \$${element.name}\$Reviver on Map<String, dynamic> {\n');
-        buffer.write('  ${element.name} to${element.name}() {\n');
+        buffer.write('extension \$${element.name}\$Reviver on JsonCodec {\n');
+        buffer
+            .write('  ${element.name} decode${element.name}(String input) {\n');
+        buffer.write('  final map = this.decode(input);\n');
 
         for (var field in element.fields) {
           if (isCereal(field)) {
             buffer.write(
               "    final ${field.type} ${field.name} = "
-              "(this['${field.name}'] as Map<String, dynamic>).to${field.type}();\n",
+              "decode${field.type}(map['${field.name}'].toString());\n",
             );
           } else if (field.type.isDartCoreString) {
             buffer.write(
-                "    final ${field.type} ${field.name} = this['${field.name}'];\n");
+                "    final ${field.type} ${field.name} = map['${field.name}'];\n");
           } else if (field.type.isDartCoreBool) {
             buffer.write(
               "    final ${field.type} ${field.name} = "
-              "this['${field.name}'] == 'true' || this['${field.name}'] == 'True';\n",
+              "this['${field.name}'] == 'true' || map['${field.name}'] == 'True';\n",
             );
           } else if (field.type.isDartCoreDouble) {
             buffer.write(
-              "    final ${field.type} ${field.name} = double.parse(this['${field.name}']);\n",
+              "    final ${field.type} ${field.name} = double.parse(map['${field.name}']);\n",
             );
           } else if (field.type.isDartCoreInt) {
             buffer.write(
-              "    final ${field.type} ${field.name} = int.parse(this['${field.name}']);\n",
+              "    final ${field.type} ${field.name} = int.parse(map['${field.name}']);\n",
             );
           } else if (field.type.isDartCoreNum) {
             buffer.write(
-              "    final ${field.type} ${field.name} = num.parse(this['${field.name}']);\n",
+              "    final ${field.type} ${field.name} = num.parse(map['${field.name}']);\n",
             );
           }
         }
