@@ -1,6 +1,7 @@
 name: cereal_generator
 author: djshuckerow@google.com
 description: A serializer library for dart with no-overhead code generation.
+homepage: https://github.com/DaveShuckerow/cereal
 
 version: 0.0.1
 

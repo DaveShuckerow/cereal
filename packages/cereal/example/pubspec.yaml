@@ -1,6 +1,7 @@
 name: cereal_example
 author: djshuckerow@google.com
-description: Generates class metadata
+description: Example of the cereal Dart serializer.
+homepage: https://github.com/DaveShuckerow/cereal
 
 environment:
   sdk: '>=2.6.0 <3.0.0'
