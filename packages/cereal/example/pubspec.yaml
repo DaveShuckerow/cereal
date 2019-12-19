@@ -6,14 +6,14 @@ environment:
   sdk: '>=2.6.0 <3.0.0'
 
 dependencies:
-  built_value: any
   cereal: 
     path: ../
-  meta: any
+  meta: ^1.1.0
 
 dev_dependencies:
-  # build_runner: any
-  # built_value_generator: any
+  cereal_generator: ^0.0.1
+  build_runner: ^1.0.0
+
+dependency_overrides:
   cereal_generator:
     path: ../../cereal_generator
-  build_runner: ^1.0.0
