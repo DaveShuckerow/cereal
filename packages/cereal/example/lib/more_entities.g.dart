@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'baz.dart';
+part of 'more_entities.dart';
 
 // **************************************************************************
 // CerealGenerator

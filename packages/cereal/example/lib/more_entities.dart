@@ -1,7 +1,7 @@
 import 'package:cereal/cereal.dart';
 import 'package:meta/meta.dart';
 
-part 'baz.g.dart';
+part 'more_entities.g.dart';
 
 @cereal
 @immutable

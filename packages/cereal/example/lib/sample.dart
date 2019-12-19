@@ -1,7 +1,7 @@
 import 'package:cereal/cereal.dart';
 import 'package:meta/meta.dart';
 
-import 'baz.dart';
+import 'more_entities.dart';
 
 part 'sample.g.dart';
 
