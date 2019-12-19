@@ -37,3 +37,35 @@ void main() {
     );
 }
 ```
+
+## Adding to your project
+
+To add Cereal to your project, change your pubspec.yaml like so:
+
+```yaml
+# You need at least Dart 2.6.0, which launched extension methods.
+environment:
+  sdk: '>=2.6.0 <3.0.0'
+
+dependencies:
+  # Depend on some version of cereal.
+  cereal: ^0.0.1
+
+dev_dependencies:
+  # Depend on some version of cereal_generator
+  cereal_generator: ^0.0.1
+  # build_runner will run the code generator.
+  build_runner: ^1.0.0
+```
+
+From there, you can run `pub get` or `flutter pub get` and start annotating data classes as `@cereal`.
+
+To generate the json serializers, run the following:
+
+```
+pub run build_runner build
+```
+or
+```
+flutter pub run build_runner build
+```
