@@ -9,7 +9,7 @@ part 'sample.g.dart';
 @immutable
 class Foo {
   final int bar;
-  final List<Baz> bazes;
+  final Set<Baz> bazes;
   final List<String> names;
 
   Foo({this.bar, this.bazes, this.names});

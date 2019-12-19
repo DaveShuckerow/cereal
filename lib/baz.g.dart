@@ -7,9 +7,9 @@ part of 'baz.dart';
 // **************************************************************************
 
 extension $Baz on Baz {
-  String toJson() => {
+  Map<String, dynamic> toJson() => {
         'value': '$value',
-      }.toString();
+      };
 }
 
 extension $Baz$Reviver on JsonCodec {

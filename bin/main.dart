@@ -4,14 +4,16 @@ import 'package:codegen/baz.dart';
 import 'package:codegen/sample.dart';
 
 void main() {
-  print(Foo(
-    bar: 0,
-    bazes: [Baz(value: 'words')],
-    names: ['words1', 'words2'],
-  ).toJson());
-  print(json
-      .decodeFoo(
-          '{"bar": "0","bazes": [{"value": "words"}],"names": ["words1", "words2"]}'
-              .toString())
-      .toJson());
+  print(
+    json.encode(
+      Foo(
+        bar: 0,
+        bazes: {Baz(value: 'words')},
+        names: ['words1', 'words2'],
+      ).toJson(),
+    ),
+  );
+  final encoded =
+      '{"bar": "0","bazes": [{"value": "words"}, {"value": "baz#2"}],"names": ["words1", "words2"]}';
+  print(json.decodeFoo(encoded).toJson());
 }

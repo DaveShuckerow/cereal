@@ -28,13 +28,13 @@ class CerealGenerator extends Generator {
         buffer.write(
           'extension \$${element.name} on ${element.name} {\n',
         );
-        buffer.write('  String toJson() => \n');
+        buffer.write('  Map<String, dynamic> toJson() => \n');
         buffer.write('    {\n');
         for (var field in element.fields) {
           final value = serializerFor(field.type, field.name);
           buffer.write("      '${field.name}': $value,\n");
         }
-        buffer.write('    }.toString();\n');
+        buffer.write('    };\n');
         buffer.write('}\n');
 
         assert(element.constructors.any((e) {
@@ -74,9 +74,9 @@ class CerealGenerator extends Generator {
 
   String serializerFor(DartType type, String value) {
     if (isCereal(type.element)) {
-      return "'\${$value.toJson()}'";
+      return '$value.toJson()';
     }
-    if (type.isDartCoreList) {
+    if (type.isDartCoreList || type.isDartCoreSet) {
       final nextType = (type as InterfaceType).typeArguments.first;
       return '[for (var e in $value) ${serializerFor(nextType, 'e')}]';
     }
@@ -96,9 +96,14 @@ class CerealGenerator extends Generator {
       return "int.parse($value)";
     } else if (type.isDartCoreNum) {
       "num.parse($value)";
-    } else if (type.isDartCoreList) {
+    } else if (type.isDartCoreList || type.isDartCoreSet) {
       final nextType = (type as InterfaceType).typeArguments.first;
-      return '[for (var e in $value) ${deserializerFor(nextType, 'e')}]';
+      final deserializer =
+          '[for (var e in $value) ${deserializerFor(nextType, 'e')}]';
+      if (type.isDartCoreSet) {
+        return 'Set.from($deserializer)';
+      }
+      return deserializer;
     }
     assert(false, 'unable to parse $value as a $type');
   }

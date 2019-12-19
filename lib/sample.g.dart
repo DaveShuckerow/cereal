@@ -7,11 +7,11 @@ part of 'sample.dart';
 // **************************************************************************
 
 extension $Foo on Foo {
-  String toJson() => {
+  Map<String, dynamic> toJson() => {
         'bar': '$bar',
-        'bazes': [for (var e in bazes) '${e.toJson()}'],
+        'bazes': [for (var e in bazes) e.toJson()],
         'names': [for (var e in names) '$e'],
-      }.toString();
+      };
 }
 
 extension $Foo$Reviver on JsonCodec {
@@ -19,7 +19,7 @@ extension $Foo$Reviver on JsonCodec {
   Foo toFoo(dynamic decoded) {
     final map = decoded;
     final int bar = int.parse(map['bar']);
-    final List<Baz> bazes = [for (var e in map['bazes']) toBaz(e)];
+    final Set<Baz> bazes = Set.from([for (var e in map['bazes']) toBaz(e)]);
     final List<String> names = [for (var e in map['names']) e];
     return Foo(
       bar: bar,
