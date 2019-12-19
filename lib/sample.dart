@@ -10,7 +10,8 @@ part 'sample.g.dart';
 class Foo {
   final int bar;
   final Set<Baz> bazes;
+  final Map<double, Bop> doubleToBop;
   final List<String> names;
 
-  Foo({this.bar, this.bazes, this.names});
+  Foo({this.bar, this.bazes, this.doubleToBop, this.names});
 }

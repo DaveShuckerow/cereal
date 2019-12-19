@@ -28,13 +28,16 @@ class CerealGenerator extends Generator {
         buffer.write(
           'extension \$${element.name} on ${element.name} {\n',
         );
-        buffer.write('  Map<String, dynamic> toJson() => \n');
-        buffer.write('    {\n');
+        buffer.write('  Map<String, dynamic> toJson() { \n');
+        buffer.write('    final __result = <String, dynamic>{};\n');
         for (var field in element.fields) {
           final value = serializerFor(field.type, field.name);
-          buffer.write("      '${field.name}': $value,\n");
+          buffer.write(
+            "    if (${field.name} != null) __result['${field.name}'] = $value;\n",
+          );
         }
-        buffer.write('    };\n');
+        buffer.write('    return __result;\n');
+        buffer.write('  }\n');
         buffer.write('}\n');
 
         assert(element.constructors.any((e) {
@@ -56,7 +59,7 @@ class CerealGenerator extends Generator {
             "map['${field.name}']",
           );
           buffer.write(
-              '    final ${field.type} ${field.name} = $deserializer;\n');
+              '    final ${field.type} ${field.name} = map["${field.name}"] == null ? null : $deserializer;\n');
         }
         buffer.write('    return ${element.name}(\n');
         for (var field in element.fields) {
@@ -80,22 +83,33 @@ class CerealGenerator extends Generator {
       final nextType = (type as InterfaceType).typeArguments.first;
       return '[for (var e in $value) ${serializerFor(nextType, 'e')}]';
     }
-    return "'\$$value'";
+    if (type.isDartCoreMap) {
+      final keyType = (type as InterfaceType).typeArguments.first;
+      final valueType = (type as InterfaceType).typeArguments.last;
+      // If the value is a Map<String, dynamic>, then we already have the correct type.
+      if (keyType.isDartCoreString && valueType.isDynamic) {
+        return value;
+      }
+      final serializedKey = serializerFor(keyType, 'entry.key');
+      final serializedValue = serializerFor(valueType, 'entry.value');
+      return '[for (var entry in $value.entries) {"key": $serializedKey, "value": $serializedValue}]';
+    }
+    return value;
   }
 
   String deserializerFor(DartType type, String value) {
     if (isCereal(type.element)) {
       return "to$type($value)";
     } else if (type.isDartCoreString) {
-      return "$value";
+      return value;
     } else if (type.isDartCoreBool) {
-      return "$value == 'true' || $value == 'True'";
+      return "($value is bool) ? $value : $value == 'true' || $value == 'True'";
     } else if (type.isDartCoreDouble) {
-      return "double.parse($value)";
+      return "($value is double) ? $value : double.parse($value)";
     } else if (type.isDartCoreInt) {
-      return "int.parse($value)";
+      return "($value is int) ? $value : int.parse($value)";
     } else if (type.isDartCoreNum) {
-      "num.parse($value)";
+      return "($value is num) ? $value : num.parse($value)";
     } else if (type.isDartCoreList || type.isDartCoreSet) {
       final nextType = (type as InterfaceType).typeArguments.first;
       final deserializer =
@@ -104,6 +118,17 @@ class CerealGenerator extends Generator {
         return 'Set.from($deserializer)';
       }
       return deserializer;
+    } else if (type.isDartCoreMap) {
+      final keyType = (type as InterfaceType).typeArguments.first;
+      final valueType = (type as InterfaceType).typeArguments.last;
+      // If the value is a Map<String, dynamic>, then we already have the correct type.
+      if (keyType.isDartCoreString && valueType.isDynamic) {
+        return value;
+      }
+      // Else, the map is stored as a list of map entries that we need to convert back.
+      final deserializedKey = deserializerFor(keyType, 'entry["key"]');
+      final deserializedValue = deserializerFor(valueType, 'entry["value"]');
+      return 'Map.fromEntries([for (var entry in $value) MapEntry($deserializedKey, $deserializedValue)])';
     }
     assert(false, 'unable to parse $value as a $type');
   }

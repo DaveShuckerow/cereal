@@ -7,6 +7,15 @@ part 'baz.g.dart';
 @immutable
 class Baz {
   final String value;
+  final Map<String, dynamic> extraStuff;
 
-  Baz({this.value});
+  Baz({this.value, this.extraStuff});
+}
+
+@cereal
+@immutable
+class Bop {
+  final Map<String, int> numberOfPeopleWithName;
+
+  Bop({this.numberOfPeopleWithName});
 }
