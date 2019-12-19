@@ -8,6 +8,8 @@ It does this with Dart's new extension methods & code generation.
 ```dart
 import 'package:cereal/cereal.dart';
 
+// The code generator will create this file,
+// but you do have to type this file name in first.
 part 'my_file.g.dart';
 
 @cereal
@@ -25,18 +27,23 @@ The code generator will generate a `Struct.toJson`, as well as a
 ```dart
 import 'dart:convert';
 
+import 'src/my_file.dart';
+
 void main() {
-    json.encode(
-        Struct(
-            foo: 0, 
-            bar: 'hello world',
-        ).toJson());
+    json.encodeStruct(Struct(
+        foo: 0, 
+        bar: 'hello world',
+    ));
 
     final struct = json.decodeStruct(
         '{"foo": 0, "bar": "hello world"}',
     );
 }
 ```
+
+Whenever your `Struct` class is in-scope, the appropriate serializer and
+deserializer methods will also be available. This is made possible
+by generated Dart class extension methods.
 
 ## Adding to your project
 
