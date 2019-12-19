@@ -13,6 +13,7 @@ extension $FlatStructure on FlatStructure {
     if (d != null) __result['d'] = d;
     if (b != null) __result['b'] = b;
     if (n != null) __result['n'] = n;
+    if (dyn != null) __result['dyn'] = dyn;
     if (str != null) __result['str'] = str;
     if (l != null) __result['l'] = [for (var e in l) e];
     if (s != null) __result['s'] = [for (var e in s) e];
@@ -25,8 +26,9 @@ extension $FlatStructure on FlatStructure {
 }
 
 extension $FlatStructure$Reviver on JsonCodec {
+  String encodeFlatStructure(FlatStructure) => encode(FlatStructure.toJson());
   FlatStructure decodeFlatStructure(String input) =>
-      toFlatStructure(this.decode(input));
+      toFlatStructure(decode(input));
   FlatStructure toFlatStructure(dynamic decoded) {
     final map = decoded;
     final int i = map["i"] == null
@@ -49,6 +51,7 @@ extension $FlatStructure$Reviver on JsonCodec {
         : (map['n'] is num || map['n'] == null)
             ? map['n']
             : num.parse(map['n']);
+    final dynamic dyn = map["dyn"] == null ? null : map['dyn'];
     final String str = map["str"] == null ? null : map['str'];
     final List<int> l = map["l"] == null
         ? null
@@ -69,6 +72,7 @@ extension $FlatStructure$Reviver on JsonCodec {
       d: d,
       b: b,
       n: n,
+      dyn: dyn,
       str: str,
       l: l,
       s: s,

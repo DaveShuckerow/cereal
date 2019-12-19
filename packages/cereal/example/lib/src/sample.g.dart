@@ -22,7 +22,8 @@ extension $Foo on Foo {
 }
 
 extension $Foo$Reviver on JsonCodec {
-  Foo decodeFoo(String input) => toFoo(this.decode(input));
+  String encodeFoo(Foo) => encode(Foo.toJson());
+  Foo decodeFoo(String input) => toFoo(decode(input));
   Foo toFoo(dynamic decoded) {
     final map = decoded;
     final int bar = map["bar"] == null

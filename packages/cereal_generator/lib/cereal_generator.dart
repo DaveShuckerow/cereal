@@ -13,6 +13,20 @@ class CerealGenerator extends Generator {
     TypeChecker.fromUrl('package:cereal/cereal.dart#CerealAnnotation'),
     TypeChecker.fromUrl('package:cereal/cereal.dart#cereal'),
   ]);
+
+  final TypeChecker skipChecker = TypeChecker.any([
+    TypeChecker.fromUrl('package:cereal/cereal.dart#SkipAnnotation'),
+    TypeChecker.fromUrl('package:cereal/cereal.dart#skip'),
+  ]);
+
+  bool isSerializableField(FieldElement field) {
+    return !field.isStatic &&
+        !field.isPrivate &&
+        !field.isSynthetic &&
+        !skipChecker.hasAnnotationOf(field) &&
+        !skipChecker.hasAnnotationOf(field.getter);
+  }
+
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
     final buffer = StringBuffer();
     final structs = library.annotatedWith(checker);
@@ -28,7 +42,7 @@ class CerealGenerator extends Generator {
         );
         buffer.write('  Map<String, dynamic> toJson() { \n');
         buffer.write('    final __result = <String, dynamic>{};\n');
-        for (var field in element.fields) {
+        for (var field in element.fields.where(isSerializableField)) {
           final value = serializerFor(field.type, field.name);
           buffer.write(
             "    if (${field.name} != null) __result['${field.name}'] = $value;\n",
@@ -45,13 +59,15 @@ class CerealGenerator extends Generator {
         }));
 
         buffer.write('extension \$${element.name}\$Reviver on JsonCodec {\n');
+        buffer.write('  String encode${element.name}(${element.name}) =>\n');
+        buffer.write('    encode(${element.name}.toJson());\n');
         buffer.write(
             '  ${element.name} decode${element.name}(String input) =>\n');
-        buffer.write('  to${element.name}(this.decode(input));\n');
+        buffer.write('  to${element.name}(decode(input));\n');
         buffer
             .write('  ${element.name} to${element.name}(dynamic decoded) {\n');
         buffer.write('  final map = decoded;\n');
-        for (var field in element.fields) {
+        for (var field in element.fields.where(isSerializableField)) {
           final deserializer = deserializerFor(
             field.type,
             "map['${field.name}']",
@@ -60,7 +76,7 @@ class CerealGenerator extends Generator {
               '    final ${field.type} ${field.name} = map["${field.name}"] == null ? null : $deserializer;\n');
         }
         buffer.write('    return ${element.name}(\n');
-        for (var field in element.fields) {
+        for (var field in element.fields.where(isSerializableField)) {
           buffer.write("      ${field.name}: ${field.name},\n");
         }
         buffer.write('    );\n');
@@ -127,6 +143,8 @@ class CerealGenerator extends Generator {
       final deserializedKey = deserializerFor(keyType, 'entry["key"]');
       final deserializedValue = deserializerFor(valueType, 'entry["value"]');
       return 'Map.fromEntries([for (var entry in $value) MapEntry($deserializedKey, $deserializedValue)])';
+    } else if (type.isDynamic) {
+      return value;
     }
     assert(false, 'unable to parse $value as a $type');
   }

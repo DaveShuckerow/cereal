@@ -17,8 +17,10 @@ extension $NestedStructure on NestedStructure {
 }
 
 extension $NestedStructure$Reviver on JsonCodec {
+  String encodeNestedStructure(NestedStructure) =>
+      encode(NestedStructure.toJson());
   NestedStructure decodeNestedStructure(String input) =>
-      toNestedStructure(this.decode(input));
+      toNestedStructure(decode(input));
   NestedStructure toNestedStructure(dynamic decoded) {
     final map = decoded;
     final FlatStructure child =
@@ -45,8 +47,10 @@ extension $SuperNestedStructure on SuperNestedStructure {
 }
 
 extension $SuperNestedStructure$Reviver on JsonCodec {
+  String encodeSuperNestedStructure(SuperNestedStructure) =>
+      encode(SuperNestedStructure.toJson());
   SuperNestedStructure decodeSuperNestedStructure(String input) =>
-      toSuperNestedStructure(this.decode(input));
+      toSuperNestedStructure(decode(input));
   SuperNestedStructure toSuperNestedStructure(dynamic decoded) {
     final map = decoded;
     final List<Set<int>> listOfSet = map["listOfSet"] == null

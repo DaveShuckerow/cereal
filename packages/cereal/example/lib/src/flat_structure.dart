@@ -10,6 +10,7 @@ class FlatStructure {
   final double d;
   final bool b;
   final num n;
+  final dynamic dyn;
   final String str;
   final List<int> l;
   final Set<double> s;
@@ -20,6 +21,7 @@ class FlatStructure {
     this.d,
     this.b,
     this.n,
+    this.dyn,
     this.str,
     this.l,
     this.s,

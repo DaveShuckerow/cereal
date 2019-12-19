@@ -34,3 +34,13 @@ const cereal = CerealAnnotation();
 class CerealAnnotation {
   const CerealAnnotation();
 }
+
+/// Annotation that marks a field to be skipped by serialization.
+const skip = SkipAnnotation();
+
+/// The backing class for [skip].
+///
+/// Do not use directly.
+class SkipAnnotation {
+  const SkipAnnotation();
+}

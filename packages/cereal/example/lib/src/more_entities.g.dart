@@ -16,7 +16,8 @@ extension $Baz on Baz {
 }
 
 extension $Baz$Reviver on JsonCodec {
-  Baz decodeBaz(String input) => toBaz(this.decode(input));
+  String encodeBaz(Baz) => encode(Baz.toJson());
+  Baz decodeBaz(String input) => toBaz(decode(input));
   Baz toBaz(dynamic decoded) {
     final map = decoded;
     final String value = map["value"] == null ? null : map['value'];
@@ -42,7 +43,8 @@ extension $Bop on Bop {
 }
 
 extension $Bop$Reviver on JsonCodec {
-  Bop decodeBop(String input) => toBop(this.decode(input));
+  String encodeBop(Bop) => encode(Bop.toJson());
+  Bop decodeBop(String input) => toBop(decode(input));
   Bop toBop(dynamic decoded) {
     final map = decoded;
     final Map<String, int> numberOfPeopleWithName =

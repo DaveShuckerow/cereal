@@ -19,6 +19,7 @@ void main() {
         b: true,
         i: 0,
         d: 0.0,
+        dyn: 12,
         str: 'string',
         n: 0,
       );
@@ -26,11 +27,12 @@ void main() {
         'i': 0,
         'b': true,
         'd': 0.0,
+        'dyn': 12,
         'str': 'string',
         'n': 0,
       };
       final serializedJson =
-          '{"i": 0,"b": true,"d": 0.0,"str": "string","n": 0}';
+          '{"i": 0,"b": true,"d": 0.0,"dyn": 12,"str": "string","n": 0}';
       test('serializes', () {
         expect(structure.toJson(), expectedJson);
       });
