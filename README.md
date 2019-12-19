@@ -49,11 +49,11 @@ environment:
 
 dependencies:
   # Depend on some version of cereal.
-  cereal: ^0.0.1
+  cereal: ^0.0.2
 
 dev_dependencies:
   # Depend on some version of cereal_generator
-  cereal_generator: ^0.0.1
+  cereal_generator: ^0.0.2
   # build_runner will run the code generator.
   build_runner: ^1.0.0
 ```
