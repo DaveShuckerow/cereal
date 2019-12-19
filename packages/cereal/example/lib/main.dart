@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:cereal_example/more_entities.dart';
-import 'package:cereal_example/sample.dart';
+import 'src/more_entities.dart';
+import 'src/sample.dart';
 
 void main() {
   final unencodedJson = Foo(
