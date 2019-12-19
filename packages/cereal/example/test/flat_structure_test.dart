@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('flat structure', () {
-    test('flat structure serializes when empty', () {
+    test('serializes when empty', () {
       expect(FlatStructure().toJson(), {});
     });
 
