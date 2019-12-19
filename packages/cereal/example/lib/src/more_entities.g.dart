@@ -52,7 +52,7 @@ extension $Bop$Reviver on JsonCodec {
                 for (var entry in map['numberOfPeopleWithName'])
                   MapEntry(
                       entry["key"],
-                      (entry["value"] is int)
+                      (entry["value"] is int || entry["value"] == null)
                           ? entry["value"]
                           : int.parse(entry["value"]))
               ]);

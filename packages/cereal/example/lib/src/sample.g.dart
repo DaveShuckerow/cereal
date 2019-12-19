@@ -27,7 +27,9 @@ extension $Foo$Reviver on JsonCodec {
     final map = decoded;
     final int bar = map["bar"] == null
         ? null
-        : (map['bar'] is int) ? map['bar'] : int.parse(map['bar']);
+        : (map['bar'] is int || map['bar'] == null)
+            ? map['bar']
+            : int.parse(map['bar']);
     final Set<Baz> bazes = map["bazes"] == null
         ? null
         : Set.from([for (var e in map['bazes']) toBaz(e)]);
@@ -36,7 +38,7 @@ extension $Foo$Reviver on JsonCodec {
         : Map.fromEntries([
             for (var entry in map['doubleToBop'])
               MapEntry(
-                  (entry["key"] is double)
+                  (entry["key"] is double || entry["key"] == null)
                       ? entry["key"]
                       : double.parse(entry["key"]),
                   toBop(entry["value"]))

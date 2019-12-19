@@ -16,8 +16,6 @@ class CerealGenerator extends Generator {
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
     final buffer = StringBuffer();
     final structs = library.annotatedWith(checker);
-    print('Checking $library for @struct annotations');
-    print(structs);
 
     for (var struct in structs) {
       final element = struct.element;
@@ -103,13 +101,13 @@ class CerealGenerator extends Generator {
     } else if (type.isDartCoreString) {
       return value;
     } else if (type.isDartCoreBool) {
-      return "($value is bool) ? $value : $value == 'true' || $value == 'True'";
+      return "($value is bool || $value == null) ? $value : $value == 'true' || $value == 'True'";
     } else if (type.isDartCoreDouble) {
-      return "($value is double) ? $value : double.parse($value)";
+      return "($value is double || $value == null) ? $value : double.parse($value)";
     } else if (type.isDartCoreInt) {
-      return "($value is int) ? $value : int.parse($value)";
+      return "($value is int || $value == null) ? $value : int.parse($value)";
     } else if (type.isDartCoreNum) {
-      return "($value is num) ? $value : num.parse($value)";
+      return "($value is num || $value == null) ? $value : num.parse($value)";
     } else if (type.isDartCoreList || type.isDartCoreSet) {
       final nextType = (type as InterfaceType).typeArguments.first;
       final deserializer =

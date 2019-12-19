@@ -7,14 +7,16 @@ environment:
   sdk: '>=2.6.0 <3.0.0'
 
 dependencies:
-  cereal: 
-    path: ../
+  cereal: 0.0.1
   meta: ^1.1.0
 
 dev_dependencies:
   cereal_generator: ^0.0.1
   build_runner: ^1.0.0
+  test: ^1.9.4
 
 dependency_overrides:
+  cereal:
+    path: ../
   cereal_generator:
     path: ../../cereal_generator
