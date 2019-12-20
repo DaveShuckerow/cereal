@@ -3,7 +3,7 @@ author: djshuckerow@google.com
 description: A serializer library for dart with no-overhead code generation.
 homepage: https://github.com/DaveShuckerow/cereal
 
-version: 0.0.2
+version: 0.0.3
 
 environment:
   sdk: '>=2.6.0 <3.0.0'

@@ -1,3 +1,7 @@
+# 0.0.3
+
+ - Properly type the generated encoder.
+
 # 0.0.2
 
  - Improve support for serializing dynamic types
