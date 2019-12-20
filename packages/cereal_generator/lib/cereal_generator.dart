@@ -59,8 +59,9 @@ class CerealGenerator extends Generator {
         }));
 
         buffer.write('extension \$${element.name}\$Reviver on JsonCodec {\n');
-        buffer.write('  String encode${element.name}(${element.name}) =>\n');
-        buffer.write('    encode(${element.name}.toJson());\n');
+        buffer.write(
+            '  String encode${element.name}(${element.name} toEncode) =>\n');
+        buffer.write('    encode(toEncode.toJson());\n');
         buffer.write(
             '  ${element.name} decode${element.name}(String input) =>\n');
         buffer.write('  to${element.name}(decode(input));\n');
